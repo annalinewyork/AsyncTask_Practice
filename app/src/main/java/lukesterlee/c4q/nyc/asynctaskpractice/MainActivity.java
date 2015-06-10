@@ -21,10 +21,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -40,39 +42,16 @@ public class MainActivity extends ActionBarActivity {
     GridView mGridView;
     Button buttonReload;
 
-    ImageView test;
-
-
-
     ImageAdapter adapter;
-
-    public static final String FLICKR_JSON_API = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //test = (ImageView) findViewById(R.id.sample);
-
-
         initializeViews();
-        //initializeData();
-
-
-
-
     }
 
-    private void initializeData() {
-        //adapter = new ImageAdapter(getApplicationContext());
-        mGridView.setAdapter(adapter);
-    }
-
-    private void refreshImages() {
-        new AsyncLoading().execute();
-    }
 
     private void setUpListener(boolean isResumed) {
         if (!isResumed) {
@@ -81,7 +60,7 @@ public class MainActivity extends ActionBarActivity {
             buttonReload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    refreshImages();
+                    new AsyncLoading().execute();
                 }
             });
         }
@@ -129,90 +108,24 @@ public class MainActivity extends ActionBarActivity {
 
     private class AsyncLoading extends AsyncTask<Void, Void, List<Bitmap>> {
 
-
         @Override
         protected List<Bitmap> doInBackground(Void... params) {
-
-            String flickrJsonApi = FLICKR_JSON_API;
-
             try {
-                URL jsonUrl = new URL(flickrJsonApi);
-                URLConnection jsonConnection = jsonUrl.openConnection();
-                InputStream in = jsonConnection.getInputStream();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-                StringBuilder builder = new StringBuilder();
-
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line + "\n");
-                }
-
-
-
-                String jsonString = builder.toString();
-
-
-
-//                DefaultHttpClient httpClient = new DefaultHttpClient();
-//                HttpGet httpGet = new HttpGet(flickrJsonApi);
-//                HttpResponse httpResponse = httpClient.execute(httpGet);
-//                HttpEntity httpEntity = httpResponse.getEntity();
-//                String jsonString = EntityUtils.toString(httpEntity);
-
-                List<Bitmap> imageList = new ArrayList<Bitmap>();
-
-
-                if (jsonString != null) {
-                    Log.i("json", jsonString);
-                    JSONObject jsonObject = new JSONObject(jsonString);
-                    JSONArray jsonArray = jsonObject.getJSONArray("items");
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        int num = jsonArray.length();
-                        JSONObject item = jsonArray.getJSONObject(i);
-                        JSONObject media = item.getJSONObject("media");
-
-                        String imageUrl = media.getString("m");
-
-                        if (imageUrl != null) {
-                            URL url = new URL(imageUrl);
-
-                            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                            connection.setConnectTimeout(0);
-                            connection.setReadTimeout(0);
-                            //InputStream in = connection.getInputStream();
-
-                            Bitmap bmp = BitmapFactory.decodeStream(connection.getInputStream());
-                            imageList.add(bmp);
-
-                        }
-
-
-
-                    }
-
-                }
-
-
-                return imageList;
-            }
-            catch (Exception e) {
+                return new FlickrGetter().getBitmapList();
+            } catch (JSONException e) {
+                Log.e("JSON", "couldn't get Json image.");
+            } catch (IOException e) {
                 Log.e("JSON", "couldn't get Json string.");
-                return null;
-
             }
-
-
+            return null;
         }
 
         @Override
         protected void onPostExecute(List<Bitmap> imageList) {
-            adapter = new ImageAdapter(getApplicationContext(), imageList);
-            mGridView.setAdapter(adapter);
-            //test.setImageBitmap(imageList.get(0));
-
+            if (imageList != null) {
+                adapter = new ImageAdapter(getApplicationContext(), imageList);
+                mGridView.setAdapter(adapter);
+            }
         }
     }
 }

@@ -21,7 +21,6 @@ public class ImageAdapter extends BaseAdapter {
 
     List<Bitmap> imageList;
 
-
     private Context mContext;
 
     public ImageAdapter(Context c, List<Bitmap> imageList) {
