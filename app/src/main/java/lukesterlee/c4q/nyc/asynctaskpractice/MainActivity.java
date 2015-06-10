@@ -23,9 +23,16 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -35,10 +42,6 @@ public class MainActivity extends ActionBarActivity {
 
     ImageView test;
 
-
-    AsyncLoading asyncImages;
-
-    List<Bitmap> imageList;
 
 
     ImageAdapter adapter;
@@ -51,24 +54,24 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        test = (ImageView) findViewById(R.id.sample);
+        //test = (ImageView) findViewById(R.id.sample);
 
 
         initializeViews();
-        initializeData();
+        //initializeData();
 
 
 
-        asyncImages = new AsyncLoading();
+
     }
 
     private void initializeData() {
-        adapter = new ImageAdapter(getApplicationContext());
+        //adapter = new ImageAdapter(getApplicationContext());
         mGridView.setAdapter(adapter);
     }
 
     private void refreshImages() {
-        asyncImages.execute();
+        new AsyncLoading().execute();
     }
 
     private void setUpListener(boolean isResumed) {
@@ -131,21 +134,43 @@ public class MainActivity extends ActionBarActivity {
         protected List<Bitmap> doInBackground(Void... params) {
 
             String flickrJsonApi = FLICKR_JSON_API;
+
             try {
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet(flickrJsonApi);
-                HttpResponse httpResponse = httpClient.execute(httpGet);
-                HttpEntity httpEntity = httpResponse.getEntity();
-                String jsonString = EntityUtils.toString(httpEntity);
+                URL jsonUrl = new URL(flickrJsonApi);
+                URLConnection jsonConnection = jsonUrl.openConnection();
+                InputStream in = jsonConnection.getInputStream();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                StringBuilder builder = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line + "\n");
+                }
+
+
+
+                String jsonString = builder.toString();
+
+
+
+//                DefaultHttpClient httpClient = new DefaultHttpClient();
+//                HttpGet httpGet = new HttpGet(flickrJsonApi);
+//                HttpResponse httpResponse = httpClient.execute(httpGet);
+//                HttpEntity httpEntity = httpResponse.getEntity();
+//                String jsonString = EntityUtils.toString(httpEntity);
 
                 List<Bitmap> imageList = new ArrayList<Bitmap>();
 
 
                 if (jsonString != null) {
+                    Log.i("json", jsonString);
                     JSONObject jsonObject = new JSONObject(jsonString);
                     JSONArray jsonArray = jsonObject.getJSONArray("items");
 
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        int num = jsonArray.length();
                         JSONObject item = jsonArray.getJSONObject(i);
                         JSONObject media = item.getJSONObject("media");
 
@@ -153,7 +178,13 @@ public class MainActivity extends ActionBarActivity {
 
                         if (imageUrl != null) {
                             URL url = new URL(imageUrl);
-                            Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
+                            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                            connection.setConnectTimeout(0);
+                            connection.setReadTimeout(0);
+                            //InputStream in = connection.getInputStream();
+
+                            Bitmap bmp = BitmapFactory.decodeStream(connection.getInputStream());
                             imageList.add(bmp);
 
                         }
@@ -178,8 +209,10 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(List<Bitmap> imageList) {
-            test.setImageBitmap(imageList.get(0));
-            adapter.refreshImages(imageList);
+            adapter = new ImageAdapter(getApplicationContext(), imageList);
+            mGridView.setAdapter(adapter);
+            //test.setImageBitmap(imageList.get(0));
+
         }
     }
 }
