@@ -9,6 +9,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -19,11 +21,11 @@ import java.util.List;
  */
 public class ImageAdapter extends BaseAdapter {
 
-    List<Bitmap> imageList;
+    List<String> imageList;
 
     private Context mContext;
 
-    public ImageAdapter(Context c, List<Bitmap> imageList) {
+    public ImageAdapter(Context c, List<String> imageList) {
         mContext = c;
         this.imageList = imageList;
     }
@@ -46,21 +48,17 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(300, 300));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+
         } else {
             imageView = (ImageView) convertView;
         }
 
 
-        imageView.setImageBitmap(imageList.get(position));
+        Picasso.with(mContext).load(imageList.get(position)).resize(300,300).centerCrop().into(imageView);
+
         return imageView;
     }
 
-    public void refreshImages(List<Bitmap> imageList) {
-        this.imageList = imageList;
-    }
 
 
 }

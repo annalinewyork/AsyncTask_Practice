@@ -106,10 +106,10 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class AsyncLoading extends AsyncTask<Void, Void, List<Bitmap>> {
+    private class AsyncLoading extends AsyncTask<Void, Void, List<String>> {
 
         @Override
-        protected List<Bitmap> doInBackground(Void... params) {
+        protected List<String> doInBackground(Void... params) {
             try {
                 return new FlickrGetter().getBitmapList();
             } catch (JSONException e) {
@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute(List<Bitmap> imageList) {
+        protected void onPostExecute(List<String> imageList) {
             if (imageList != null) {
                 adapter = new ImageAdapter(getApplicationContext(), imageList);
                 mGridView.setAdapter(adapter);

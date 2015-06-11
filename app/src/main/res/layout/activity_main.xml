@@ -13,11 +13,10 @@
 
     <GridView
         android:layout_width="match_parent"
-        android:layout_height="420dp"
+        android:layout_height="450dp"
         android:id="@+id/gridView"
-        android:numColumns="2"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.28" />
+        android:numColumns="auto_fit"
+        android:layout_gravity="center_horizontal" />
 
 
 

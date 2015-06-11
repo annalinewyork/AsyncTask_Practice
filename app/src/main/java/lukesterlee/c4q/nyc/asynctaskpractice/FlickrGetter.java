@@ -50,8 +50,8 @@ public class FlickrGetter {
         return null;
     }
 
-    public List<Bitmap> getBitmapList() throws JSONException, IOException {
-        List<Bitmap> imageList = new ArrayList<Bitmap>();
+    public List<String> getBitmapList() throws JSONException, IOException {
+        List<String> imageList = new ArrayList<String>();
 
         String jsonString = getJsonString();
         if (jsonString != null) {
@@ -59,27 +59,13 @@ public class FlickrGetter {
             JSONArray jsonArray = jsonObject.getJSONArray("items");
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                int num = jsonArray.length();
+
                 JSONObject item = jsonArray.getJSONObject(i);
                 JSONObject media = item.getJSONObject("media");
                 String imageUrl = media.getString("m");
 
                 if (imageUrl != null) {
-                    URL url = null;
-                    try {
-                        url = new URL(imageUrl);
-                        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                        connection.setConnectTimeout(0);
-                        connection.setReadTimeout(0);
-
-
-                        Bitmap bmp = BitmapFactory.decodeStream(connection.getInputStream());
-                        imageList.add(bmp);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    } catch (IOException ioe) {
-                        Log.e(TAG, "couldn't get json image");
-                    }
+                    imageList.add(imageUrl);
                 }
             }
         }
