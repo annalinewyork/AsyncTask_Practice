@@ -1,23 +1,15 @@
 package lukesterlee.c4q.nyc.asynctaskpractice;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
-
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Willee on 6/9/15.
+ * Created by Luke Lee on 6/9/15.
  */
 public class ImageAdapter extends BaseAdapter {
 
