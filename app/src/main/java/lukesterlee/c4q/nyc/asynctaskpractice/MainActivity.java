@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     // TODO : Step 6 - start the AsyncTask!
-                    new AsyncLoading().execute();
+
                 }
             });
         }
@@ -90,23 +90,14 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected List<String> doInBackground(Void... params) {
             // TODO : Step 3 - by using FlickrGetter.java, get latest 20 images' Urls from Flickr and return the result.
-            try {
-                return new FlickrGetter().getBitmapList();
-            } catch (JSONException e) {
-                Log.e("JSON", "couldn't get Json image.");
-            } catch (IOException e) {
-                Log.e("JSON", "couldn't get Json string.");
-            }
+
             return null;
         }
 
         @Override
         protected void onPostExecute(List<String> imageList) {
             // TODO : Step 5 - Now we have ImageAdapter and the data(list), post the picture!
-            if (imageList != null) {
-                adapter = new ImageAdapter(getApplicationContext(), imageList);
-                mGridView.setAdapter(adapter);
-            }
+            
         }
     }
 }

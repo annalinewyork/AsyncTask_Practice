@@ -24,22 +24,7 @@ public class FlickrGetter {
 
     // TODO : Step 1 - complete this method,return the entire json string.
     public String getJsonString() throws IOException {
-        URL jsonUrl = new URL(FLICKR_JSON_API);
-        HttpURLConnection connection = (HttpURLConnection) jsonUrl.openConnection();
-        connection.setConnectTimeout(0);
-        connection.setReadTimeout(0);
-        try {
-            InputStream in = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder builder = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line + "\n");
-            }
-            return builder.toString();
-        } catch (IOException ioe) {
-            Log.e(TAG, "failed to get Json string");
-        }
+
         return null;
     }
 
@@ -47,22 +32,7 @@ public class FlickrGetter {
     public List<String> getBitmapList() throws JSONException, IOException {
         List<String> imageUrlList = new ArrayList<String>();
 
-        String jsonString = getJsonString();
-        if (jsonString != null) {
-            JSONObject jsonObject = new JSONObject(jsonString);
-            JSONArray jsonArray = jsonObject.getJSONArray("items");
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-
-                JSONObject item = jsonArray.getJSONObject(i);
-                JSONObject media = item.getJSONObject("media");
-                String imageUrl = media.getString("m");
-
-                if (imageUrl != null) {
-                    imageUrlList.add(imageUrl);
-                }
-            }
-        }
         return imageUrlList;
     }
 }
