@@ -22,6 +22,7 @@ public class FlickrGetter {
 
     public static final String FLICKR_JSON_API = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
 
+    // TODO : Step 1 - complete this method,return the entire json string.
     public String getJsonString() throws IOException {
         URL jsonUrl = new URL(FLICKR_JSON_API);
         HttpURLConnection connection = (HttpURLConnection) jsonUrl.openConnection();
@@ -42,8 +43,9 @@ public class FlickrGetter {
         return null;
     }
 
+    // TODO : Step 2 - by using Step 1's result, get 20 images' url addresses and save into ArrayList in String.
     public List<String> getBitmapList() throws JSONException, IOException {
-        List<String> imageList = new ArrayList<String>();
+        List<String> imageUrlList = new ArrayList<String>();
 
         String jsonString = getJsonString();
         if (jsonString != null) {
@@ -57,10 +59,10 @@ public class FlickrGetter {
                 String imageUrl = media.getString("m");
 
                 if (imageUrl != null) {
-                    imageList.add(imageUrl);
+                    imageUrlList.add(imageUrl);
                 }
             }
         }
-        return imageList;
+        return imageUrlList;
     }
 }

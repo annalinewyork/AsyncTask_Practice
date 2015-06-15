@@ -13,6 +13,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 
+// How it works : The user clicks button "Load" then get the latest 20 images from Flickr and display in GridView.
 
 public class MainActivity extends ActionBarActivity {
 
@@ -37,6 +38,7 @@ public class MainActivity extends ActionBarActivity {
             buttonReload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // TODO : Step 6 - start the AsyncTask!
                     new AsyncLoading().execute();
                 }
             });
@@ -87,6 +89,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected List<String> doInBackground(Void... params) {
+            // TODO : Step 3 - by using FlickrGetter.java, get latest 20 images' Urls from Flickr and return the result.
             try {
                 return new FlickrGetter().getBitmapList();
             } catch (JSONException e) {
@@ -99,6 +102,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(List<String> imageList) {
+            // TODO : Step 5 - Now we have ImageAdapter and the data(list), post the picture!
             if (imageList != null) {
                 adapter = new ImageAdapter(getApplicationContext(), imageList);
                 mGridView.setAdapter(adapter);
