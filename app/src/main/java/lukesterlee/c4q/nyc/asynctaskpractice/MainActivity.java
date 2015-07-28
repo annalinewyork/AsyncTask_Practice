@@ -1,5 +1,7 @@
 package lukesterlee.c4q.nyc.asynctaskpractice;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,8 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+
 import org.json.JSONException;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 // How it works : The user clicks button "Load" then get the latest 20 images from Flickr and display in GridView.
@@ -40,6 +46,7 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     // TODO : Step 6 - start the AsyncTask!
 
+                    new AsyncLoading().execute();
                 }
             });
         }
@@ -90,14 +97,28 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected List<String> doInBackground(Void... params) {
             // TODO : Step 3 - by using FlickrGetter.java, get latest 20 images' Urls from Flickr and return the result.
+            //in order to use method getBitmapList() , need this instance.
+            FlickrGetter flickrGetter = new FlickrGetter();
+            //store the urls into a list.
+            List<String> imageUrls = new ArrayList<String>();
 
-            return null;
+            try {
+                imageUrls = flickrGetter.getBitmapList();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.d("Urls","doInBackground"+ imageUrls.size());
+            return imageUrls;
         }
 
         @Override
         protected void onPostExecute(List<String> imageList) {
             // TODO : Step 5 - Now we have ImageAdapter and the data(list), post the picture!
-            
+            //list.size(), array.length()
+            Log.d("Urls",imageList.size()+"");
+
         }
     }
 }
