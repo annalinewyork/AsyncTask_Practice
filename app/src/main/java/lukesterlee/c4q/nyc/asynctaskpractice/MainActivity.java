@@ -1,5 +1,6 @@
 package lukesterlee.c4q.nyc.asynctaskpractice;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -118,6 +119,9 @@ public class MainActivity extends ActionBarActivity {
             // TODO : Step 5 - Now we have ImageAdapter and the data(list), post the picture!
             //list.size(), array.length()
             Log.d("Urls",imageList.size()+"");
+            adapter = new ImageAdapter(getBaseContext(),imageList);
+
+            mGridView.setAdapter(adapter);
 
         }
     }
